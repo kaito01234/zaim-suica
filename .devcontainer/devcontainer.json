@@ -1,6 +1,14 @@
 {
   "name": "zaim-suica (clasp)",
   "image": "mcr.microsoft.com/devcontainers/javascript-node:22",
+  "features": {
+    // Claude Code を導入（コンテナ内で claude コマンドが使える）
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1.0": {}
+  },
+  // Claude Code の認証情報や設定を保持し、リビルドしても再ログイン不要にする
+  "mounts": [
+    "source=claude-code-config-${devcontainerId},target=/home/node/.claude,type=volume"
+  ],
   // clasp をグローバルに導入（gas/ を Apps Script に push するため）
   "postCreateCommand": "npm install -g @google/clasp@2.4.2",
   "customizations": {
