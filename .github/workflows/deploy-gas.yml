@@ -1,0 +1,32 @@
+name: Deploy to Apps Script
+
+# main に push されたら gas/ の内容を clasp で Apps Script に反映する。
+# pull_request では動かさない（Public リポジトリで Secret を露出させないため）。
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'gas/**'
+      - '.clasp.json'
+      - '.github/workflows/deploy-gas.yml'
+  workflow_dispatch: {}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # clasp のログイン情報（~/.clasprc.json の中身）を Secret から復元する
+      - name: Restore clasp credentials
+        run: printf '%s' "$CLASPRC_JSON" > "$HOME/.clasprc.json"
+        env:
+          CLASPRC_JSON: ${{ secrets.CLASPRC_JSON }}
+
+      # .clasp.json の rootDir(gas) の内容をリモートに上書き反映
+      - name: Push to Apps Script
+        run: npx @google/clasp@2.4.2 push --force

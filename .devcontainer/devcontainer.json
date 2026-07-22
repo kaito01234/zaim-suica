@@ -9,7 +9,8 @@
   "mounts": [
     "source=claude-code-config-${devcontainerId},target=/home/node/.claude,type=volume"
   ],
-  // clasp をグローバルに導入（gas/ を Apps Script に push するため）
+  // clasp をグローバルに導入する。デプロイは GitHub Actions が行うので、Codespace では
+  // 主に認証情報の取得（一度だけの clasp login）と clasp pull に使う。
   "postCreateCommand": "npm install -g @google/clasp@2.4.2",
   "customizations": {
     "vscode": {
@@ -21,8 +22,8 @@
       }
     }
   },
-  // Codespaces では clasp login のブラウザ認証が使えないため --no-localhost を使う
+  // デプロイは main への git push で GitHub Actions が実行する（詳細は README 参照）。
   "postAttachCommand": {
-    "hint": "echo 'clasp を使うには: clasp login --no-localhost → clasp push --force'"
+    "hint": "echo 'デプロイは git push で自動実行される（GitHub Actions）'"
   }
 }
