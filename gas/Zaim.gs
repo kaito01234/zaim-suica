@@ -1,15 +1,15 @@
-/** Zaim API クライアント（OAuth 1.0a / HMAC-SHA1）。src/ の Node 実装を GAS へ移植したもの。 */
+/** Zaim API クライアント。OAuth 1.0a を HMAC-SHA1 署名で扱う。 */
 
 var ZAIM_API_ = 'https://api.zaim.net/v2';
 
-// RFC3986 準拠のパーセントエンコード
+// RFC3986 に準拠したパーセントエンコード
 function pctEncode_(value) {
   return encodeURIComponent(String(value)).replace(/[!*'()]/g, function (c) {
     return '%' + c.charCodeAt(0).toString(16).toUpperCase();
   });
 }
 
-// 署名対象と実送信でエンコードを一致させるため、自前でクエリ/ボディ文字列を組み立てる
+// 署名の対象と実際の送信でエンコードを一致させるため、クエリとボディの文字列を自前で組み立てる
 function encodeParams_(params) {
   return Object.keys(params)
     .map(function (k) {
@@ -97,7 +97,7 @@ function zaimRequest_(method, path, params) {
   return JSON.parse(text);
 }
 
-// 口座・カテゴリ・ジャンルの名前 -> ID を解決
+// 口座、カテゴリ、ジャンルの名前を ID に解決する
 function resolveIds_(mapping) {
   var accounts = zaimRequest_('GET', '/home/account').accounts;
   var categories = zaimRequest_('GET', '/home/category').categories;

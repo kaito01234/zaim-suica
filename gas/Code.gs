@@ -7,7 +7,7 @@
  *   3) （任意）pollImportDryRun() で登録せず変換結果だけログ確認
  */
 
-// 監視フォルダを走査し、新規/更新された CSV の未取込明細だけを Zaim に登録する
+// 監視フォルダを走査し、新規または更新された CSV のうち未取込の明細だけを Zaim に登録する
 function pollAndImport() {
   runImport_(false);
 }
@@ -25,7 +25,7 @@ function runImport_(dryRun) {
   var ss = getStateSpreadsheet_();
 
   // 前回処理した最終更新時刻。これより古いファイルは中身を読まずにスキップする。
-  // （フォルダに CSV が永久に溜まっても、毎回読むのは新規/更新分だけ）
+  // フォルダに CSV が溜まり続けても、毎回読むのは新規または更新された分だけになる。
   var hwm = dryRun ? 0 : getHwm_();
 
   var targets = [];
@@ -103,7 +103,7 @@ function runImport_(dryRun) {
 // 時間主導トリガーを作成（既存の pollAndImport トリガーは張り替える）
 function installTrigger() {
   var minutes = parseInt(prop_('POLL_MINUTES', '15'), 10);
-  if ([1, 5, 10, 15, 30].indexOf(minutes) === -1) minutes = 15; // everyMinutes は 1/5/10/15/30 のみ
+  if ([1, 5, 10, 15, 30].indexOf(minutes) === -1) minutes = 15; // everyMinutes は 1, 5, 10, 15, 30 のみ受け付ける
   ScriptApp.getProjectTriggers().forEach(function (t) {
     if (t.getHandlerFunction() === 'pollAndImport') ScriptApp.deleteTrigger(t);
   });

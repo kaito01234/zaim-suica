@@ -1,0 +1,20 @@
+{
+  "name": "zaim-suica (clasp)",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:22",
+  // clasp をグローバルに導入（gas/ を Apps Script に push するため）
+  "postCreateCommand": "npm install -g @google/clasp@2.4.2",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        // .gs / .js を JavaScript として扱う
+        "files.associations": {
+          "*.gs": "javascript"
+        }
+      }
+    }
+  },
+  // Codespaces では clasp login のブラウザ認証が使えないため --no-localhost を使う
+  "postAttachCommand": {
+    "hint": "echo 'clasp を使うには: clasp login --no-localhost → clasp push --force'"
+  }
+}

@@ -1,16 +1,19 @@
 /**
- * 設定はすべて「スクリプト プロパティ」に保存する（コードにトークンを埋め込まない）。
- * プロジェクトの設定 > スクリプト プロパティ から以下を登録しておくこと。
+ * 設定はすべてスクリプトプロパティに保存する。
+ * コードにトークンを埋め込まないため。
+ * エディタの「プロジェクトの設定」の「スクリプト プロパティ」で、以下を登録しておく。
  *
- *   ZAIM_CONSUMER_KEY / ZAIM_CONSUMER_SECRET
- *   ZAIM_ACCESS_TOKEN / ZAIM_ACCESS_TOKEN_SECRET
- *   ZAIM_SUICA_ACCOUNT          … Suica に対応する Zaim 口座名
- *   ZAIM_CHARGE_FROM_ACCOUNT    … チャージの資金元口座名
- *   ZAIM_TRANSIT_CATEGORY / ZAIM_TRANSIT_GENRE
- *   ZAIM_SHOPPING_CATEGORY / ZAIM_SHOPPING_GENRE
- *   DRIVE_FOLDER_ID             … 監視する Drive フォルダの ID
- *   CSV_ENCODING                … 省略時 UTF-8（Shift_JIS の場合は指定）
- *   STATE_SPREADSHEET_ID        … 取込ログの Spreadsheet ID（未設定なら初回に自動作成）
+ *   ZAIM_CONSUMER_KEY, ZAIM_CONSUMER_SECRET：アプリの鍵
+ *   ZAIM_ACCESS_TOKEN, ZAIM_ACCESS_TOKEN_SECRET：ユーザーのアクセストークン
+ *   ZAIM_SUICA_ACCOUNT：Suica に対応する Zaim の口座名
+ *   ZAIM_CHARGE_MODE：チャージの扱い。income は収入、transfer は振替
+ *   ZAIM_CHARGE_INCOME_CATEGORY：income のときの収入カテゴリ名
+ *   ZAIM_CHARGE_FROM_ACCOUNT：transfer のときの資金元口座名
+ *   ZAIM_TRANSIT_CATEGORY, ZAIM_TRANSIT_GENRE：乗車のカテゴリとジャンル
+ *   ZAIM_SHOPPING_CATEGORY, ZAIM_SHOPPING_GENRE：物販のカテゴリとジャンル
+ *   DRIVE_FOLDER_ID：監視する Drive フォルダの ID
+ *   CSV_ENCODING：省略時は UTF-8。Shift_JIS の CSV なら指定する
+ *   STATE_SPREADSHEET_ID：取込ログの Spreadsheet ID。未設定なら初回に自動作成する
  */
 
 function props_() {
@@ -40,7 +43,7 @@ function getZaimCreds() {
 function getMapping() {
   return {
     suicaAccount: prop_('ZAIM_SUICA_ACCOUNT', 'Suica'),
-    chargeMode: prop_('ZAIM_CHARGE_MODE', 'income'), // income=収入 / transfer=振替
+    chargeMode: prop_('ZAIM_CHARGE_MODE', 'income'), // income は収入、transfer は振替
     chargeFromAccount: prop_('ZAIM_CHARGE_FROM_ACCOUNT', '現金'),
     chargeIncomeCategory: prop_('ZAIM_CHARGE_INCOME_CATEGORY', 'その他'),
     transitCategory: prop_('ZAIM_TRANSIT_CATEGORY', '交通'),

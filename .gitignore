@@ -3,3 +3,5 @@
 id.txt
 *.csv
 .tmp-*
+# clasp のログイン情報（トークン）はコミットしない
+.clasprc.json
