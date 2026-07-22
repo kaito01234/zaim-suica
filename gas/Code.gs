@@ -20,7 +20,7 @@ function pollImportDryRun() {
 function runImport_(dryRun) {
   var folderId = requireProp_('DRIVE_FOLDER_ID');
   var folder = DriveApp.getFolderById(folderId);
-  var encoding = prop_('CSV_ENCODING', 'UTF-8');
+  var encoding = CSV_ENCODING;
 
   var ss = getStateSpreadsheet_();
 
@@ -102,7 +102,7 @@ function runImport_(dryRun) {
 
 // 時間主導トリガーを作成（既存の pollAndImport トリガーは張り替える）
 function installTrigger() {
-  var minutes = parseInt(prop_('POLL_MINUTES', '15'), 10);
+  var minutes = POLL_MINUTES;
   if ([1, 5, 10, 15, 30].indexOf(minutes) === -1) minutes = 15; // everyMinutes は 1, 5, 10, 15, 30 のみ受け付ける
   ScriptApp.getProjectTriggers().forEach(function (t) {
     if (t.getHandlerFunction() === 'pollAndImport') ScriptApp.deleteTrigger(t);

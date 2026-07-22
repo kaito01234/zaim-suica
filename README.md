@@ -110,29 +110,41 @@ clasp を使わず手動でコピペする場合は、[script.google.com](https:
 
 ### 2. スクリプトプロパティを登録する
 
-エディタの「プロジェクトの設定」の「スクリプト プロパティ」で、以下を追加する。
-値は `.env` から転記する。
+GAS はスクリプトプロパティを読むだけで、リポジトリの `.env` は参照しない。
+そのため `.env` をコミットしなくても動作に支障はない。
+エディタの「プロジェクトの設定」の「スクリプト プロパティ」で登録する。
+
+登録が必須なのは、秘密情報のトークンと環境ごとに変わるフォルダ ID だけである。
 
 | キー | 値 |
 | --- | --- |
-| `ZAIM_CONSUMER_KEY` | `.env` の値 |
-| `ZAIM_CONSUMER_SECRET` | `.env` の値 |
-| `ZAIM_ACCESS_TOKEN` | `.env` の値 |
-| `ZAIM_ACCESS_TOKEN_SECRET` | `.env` の値 |
+| `ZAIM_CONSUMER_KEY` | dev.zaim.net のアプリ登録で発行した値 |
+| `ZAIM_CONSUMER_SECRET` | dev.zaim.net のアプリ登録で発行した値 |
+| `ZAIM_ACCESS_TOKEN` | OAuth 認可で取得した値 |
+| `ZAIM_ACCESS_TOKEN_SECRET` | OAuth 認可で取得した値 |
 | `DRIVE_FOLDER_ID` | 監視する Drive フォルダの ID（フォルダ URL の末尾） |
-| `ZAIM_SUICA_ACCOUNT` | `モバイル Suica` |
-| `ZAIM_CHARGE_MODE` | `income`（収入）または `transfer`（振替）。既定は `income` |
-| `ZAIM_CHARGE_INCOME_CATEGORY` | `income` のときの収入カテゴリ。例：`その他` |
-| `ZAIM_CHARGE_FROM_ACCOUNT` | `transfer` のときの資金元口座。例：`お財布` |
-| `ZAIM_TRANSIT_CATEGORY`、`ZAIM_TRANSIT_GENRE` | 乗車のカテゴリとジャンル。例：`交通`、`電車` |
-| `ZAIM_SHOPPING_CATEGORY`、`ZAIM_SHOPPING_GENRE` | 物販のカテゴリとジャンル。例：`食費`、`その他` |
-| `CSV_ENCODING` | 任意。Shift_JIS の CSV なら `Shift_JIS` |
-| `POLL_MINUTES` | 任意。ポーリング間隔。`1`、`5`、`10`、`15`、`30` のいずれか。既定は 15 |
 
 `STATE_SPREADSHEET_ID` と `LAST_MODIFIED_HWM` は未設定でよい。
 実行時に自動で作成、更新される。
 
-### 3. 権限の承認と動作確認
+### 3. マッピングなどの設定を確認する
+
+口座名やカテゴリ名などのマッピング、CSV の文字コード、ポーリング間隔は、スクリプトプロパティではなく [gas/Config.gs](gas/Config.gs) を直接編集して設定する。
+既定値は次のとおりで、Zaim の設定がこれと一致していれば編集は要らない。
+変えたい項目や増やしたい項目があれば `Config.gs` を書き換えて `clasp push` する。
+
+| 設定 | 既定値 |
+| --- | --- |
+| `suicaAccount` | `モバイル Suica` |
+| `chargeMode` | `income`（収入）。`transfer` で振替 |
+| `chargeIncomeCategory` | `その他` |
+| `chargeFromAccount` | `お財布`（`transfer` のときの資金元） |
+| `transitCategory`、`transitGenre` | `交通`、`電車` |
+| `shoppingCategory`、`shoppingGenre` | `食費`、`その他` |
+| `CSV_ENCODING` | `UTF-8`（Shift_JIS の CSV なら `Shift_JIS`） |
+| `POLL_MINUTES` | `15`（`1`、`5`、`10`、`15`、`30` のいずれか） |
+
+### 4. 権限の承認と動作確認
 
 1. エディタで `pollImportDryRun` を選んで実行する。
    初回は OAuth スコープの承認を求められるので許可する。
@@ -140,15 +152,12 @@ clasp を使わず手動でコピペする場合は、[script.google.com](https:
 3. 問題なければ `pollAndImport` を手動で実行する。
    Zaim に登録され、`zaim-suica-state` の `imported` シートにログが残る。
 
-### 4. トリガーの作成
+### 5. トリガーの作成
 
 `installTrigger` を一度実行すると、`POLL_MINUTES`（既定は 15 分）ごとに `pollAndImport` が自動で実行される。
 停止するときは `uninstallTrigger` を実行する。
 
 ## 注意
-
-`.env` と `id.txt` は `.gitignore` 済みである。
-認証情報はコミットしない。
 
 Zaim API に登録できる日付は「過去・未来 5 年以内」に限られる。
 それより古い明細は登録に失敗する。
