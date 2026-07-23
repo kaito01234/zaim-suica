@@ -171,7 +171,6 @@ function postRecord_(rec) {
       date: rec.date,
       to_account_id: rec.to_account_id,
       comment: rec.comment,
-      place: rec.comment,
     });
   } else {
     resp = zaimRequest_('POST', '/home/money/payment', {
@@ -181,7 +180,6 @@ function postRecord_(rec) {
       date: rec.date,
       from_account_id: rec.from_account_id,
       comment: rec.comment,
-      place: rec.comment,
     });
   }
   return resp && resp.money ? resp.money.id : '';
